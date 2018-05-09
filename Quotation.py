@@ -8,14 +8,22 @@ import configparser as cfg
 import json
 #import pickle
 import re
+import shelve
 import string
 #import shelve
 import sys
 import unittest
 
+import arrow
+
 class Quotation():
 
-    def __init__(self, quotefile):
+    def __init__(self, language):
+        self.config = cfg.ConfigParser(interpolation=cfg.ExtendedInterpolation() )
+        self.config.read('quotation.cfg')
+
+        quotefile = self.config['Languages'][language]
+
         try:
             f = open(quotefile, "r")
             self.quotes = json.load(f)
@@ -28,7 +36,7 @@ class Quotation():
         return len(self.quotes)
 
     def random_quote(self):
-        return choice(self.quotes)
+        self.quote = choice(self.quotes)
 
     def search(self, pattern, flags=0):
         for q in self.quotes:
@@ -39,7 +47,7 @@ class Quotation():
                 print(q)
 
     def show(self):
-        quote = self.random_quote()
+        quote = self.quote
         q = quote[0]
         print (q, "\n")
         for l in quote[1:]:
@@ -49,39 +57,36 @@ class Quotation():
 class GermanQuote(Quotation):
 
     def __init__(self):
-        config = cfg.ConfigParser()
-        config.read('quotation.cfg')
-        self.quotefile = config['Default']['GermanQuotesFile']
+        super().__init__('German')
 
-        super().__init__(self.quotefile)
+        self.history_file = self.config['ShelfFiles']['GermanShelfFile']
 
+    ### The GermanQuote subclass logs the date and time a quote was displayed.
+    ### It uses a persistent dictionary via the shelve module.
+    def random_quote(self):
+        super().random_quote()
+
+        with shelve.open(self.history_file) as history:
+            history[self.quote[0]] = arrow.utcnow()
 
 class LatinQuote(Quotation):
 
     def __init__(self):
-        config = cfg.ConfigParser()
-        config.read('quotation.cfg')
-        self.quotefile = config['Default']['LatinQuotesFile']
-
-        super().__init__(self.quotefile)
+        super().__init__('Latin')
 
 
 class SpanishQuote(Quotation):
 
     def __init__(self):
-        config = cfg.ConfigParser()
-        config.read('quotation.cfg')
-        self.quotefile = config['Default']['SpanishQuotesFile']
-
-        super().__init__(self.quotefile)
+        super().__init__('Spanish')
 
     ### The SpanishShow subclass uses a Template to display its quotation.
     ### However, this approach is overkill.
     def show(self):
-        quote = self.random_quote()
-        values = { 'quote': quote[0],
-                   'trans': quote[1],
-                   'note' : quote[2] if len (quote) > 2 else '' }
+        self.random_quote()
+        values = { 'quote': self.quote[0],
+                   'trans': self.quote[1],
+                   'note' : self.quote[2] if len (self.quote) > 2 else '' }
 
         template = '''$quote
 
