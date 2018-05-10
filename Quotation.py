@@ -6,11 +6,9 @@ from random import choice
 
 import configparser as cfg
 import json
-#import pickle
 import re
 import shelve
 import string
-#import shelve
 import sys
 import unittest
 
@@ -47,12 +45,29 @@ class Quotation():
                 print(q)
 
     def show(self):
+        self.random_quote()
         quote = self.quote
         q = quote[0]
         print (q, "\n")
         for l in quote[1:]:
             print("    ", l)
 
+
+class LatinQuote(Quotation):
+
+    def __init__(self):
+        super().__init__('Latin')
+
+    ### The LatinQuote subclass prompts the user to display another quote
+    def show(self):
+        self.random_quote()
+        try:
+            while True:
+                print ( self.quote[0] + ' : ' + self.quote[1] )
+                ans = input("\nAnother quote? ")
+                self.random_quote()
+        except KeyboardInterrupt:
+            sys.exit()
 
 class GermanQuote(Quotation):
 
@@ -68,11 +83,6 @@ class GermanQuote(Quotation):
 
         with shelve.open(self.history_file) as history:
             history[self.quote[0]] = arrow.utcnow()
-
-class LatinQuote(Quotation):
-
-    def __init__(self):
-        super().__init__('Latin')
 
 
 class SpanishQuote(Quotation):
