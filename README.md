@@ -1,5 +1,5 @@
 # quotation
-A library and console application to display a quote in German, Spanish, or Latin to the user. Similar to the [fortune program in Unix](https://en.wikipedia.org/wiki/Fortune_(Unix\)).
+A library and console application to display a quote in German, Spanish, or Latin to the user. Similar to the fortune program in Unix. https://en.wikipedia.org/wiki/Fortune_(Unix)
 
 ## Introduction
 This project shows basic object oriented design in action. It also uses unittest as the testing framework. The project includes the following files:
@@ -57,8 +57,7 @@ Out[9]:
  ['Schlafende Hunde soll man nicht wecken.',
   'English Equivalent: Let sleeping dogs lie.'],
  ['Wer mich liebt, der libt auch meinen Hund.', 'Love me, love my dog.']]
-```
-```
+
 In [12]: lq.search('\mamor\M')
 Out[12]:
 [['Tempus fugit, amor manet.', 'Time flees, love stays'],
