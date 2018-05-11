@@ -6,7 +6,7 @@ from random import choice
 
 import configparser as cfg
 import json
-import re
+import regex as re
 import shelve
 import string
 import sys
@@ -37,12 +37,14 @@ class Quotation():
         self.quote = choice(self.quotes)
 
     def search(self, pattern, flags=0):
+        results = []
         for q in self.quotes:
             concatenated = ""
             for s in list(chain(q)):
                 concatenated += s
             if re.search(pattern, concatenated, flags):
-                print(q)
+                results.append(q)
+        return results
 
     def show(self):
         self.random_quote()
